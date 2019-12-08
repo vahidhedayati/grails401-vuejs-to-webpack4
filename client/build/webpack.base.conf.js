@@ -3,7 +3,11 @@ const path = require('path')
 const utils = require('./utils')
 const config = require('../config')
 const vueLoaderConfig = require('./vue-loader.conf')
-
+const MiniCssExtractPlugin  = require("mini-css-extract-plugin")
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const helpers               = require('./helpers')
+const env                   = process.env.NODE_ENV
+const isDev                 = env === `development`
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
@@ -37,6 +41,17 @@ module.exports = {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
     }
+  },
+  optimization: {
+    splitChunks: {
+      // Must be specified for HtmlWebpackPlugin to work correctly.
+      // See: https://github.com/jantimon/html-webpack-plugin/issues/882
+      chunks: `all`,
+    },
+  },
+  entry: {
+    polyfill: '@babel/polyfill',
+    main: helpers.root('src', 'main'),
   },
   module: {
     rules: [
